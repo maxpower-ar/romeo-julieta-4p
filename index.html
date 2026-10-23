@@ -1,0 +1,487 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planos Romeo y Julieta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+/* Layout: mesa de dibujo — panel de cotas a la izquierda, láminas a la derecha con pestañas por vista */
+:root{
+  --paper:#eef1f3; --sheet:#fbfcfc; --ink:#1c2430; --ink-2:#5a6676; --line:#c9d0d8;
+  --monte:#3f86c6; --capu:#b3322a; --amber:#c98a12;
+  --ok:#2f8a4f; --warn:#c98a12; --bad:#c23b2f;
+  --grid:#e3e8ed;
+  --f-disp:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#12171d; --sheet:#182029; --ink:#e3e9ef; --ink-2:#97a3b1; --line:#2f3a46;
+  --monte:#6fb0ea; --capu:#e0605a; --amber:#e3a83a; --ok:#58b97a; --warn:#e3a83a; --bad:#ec6a5f; --grid:#212b35; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#12171d; --sheet:#182029; --ink:#e3e9ef; --ink-2:#97a3b1; --line:#2f3a46;
+  --monte:#6fb0ea; --capu:#e0605a; --amber:#e3a83a; --ok:#58b97a; --warn:#e3a83a; --bad:#ec6a5f; --grid:#212b35; color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0}
+.wrap{max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px 24px}
+header h1{font-size:2rem;letter-spacing:.02em;text-transform:uppercase;font-weight:700}
+header p{margin:2px 0 0;color:var(--ink-2);max-width:62ch}
+.scenes{display:flex;flex-wrap:wrap;gap:6px}
+.scene{font-family:var(--f-disp);font-size:1rem;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid var(--line);background:var(--sheet);color:var(--ink);padding:6px 12px;border-radius:3px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.scene i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.scene[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--ink)}
+.scene:focus-visible,button:focus-visible,input:focus-visible,.tab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.main{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+aside{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:6px 14px 14px;display:flex;flex-direction:column;gap:4px}
+details{border-bottom:1px solid var(--line);padding-block:6px}
+details:last-of-type{border-bottom:0}
+summary{font-family:var(--f-disp);text-transform:uppercase;letter-spacing:.06em;font-weight:600;cursor:pointer;padding:4px 0;font-size:.95rem}
+.p{display:grid;grid-template-columns:1fr 64px;gap:2px 8px;align-items:center;padding:4px 0}
+.p label{font-size:.88rem;color:var(--ink-2)}
+.p input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--ink)}
+.p input[type=number]{grid-row:1;grid-column:2;width:64px;font-family:var(--f-mono);font-size:.85rem;padding:2px 4px;border:1px solid var(--line);border-radius:3px;background:var(--paper);color:var(--ink);text-align:right}
+.btns{display:flex;gap:8px;flex-wrap:wrap;padding-top:8px}
+button.b{font-family:var(--f-disp);text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:5px 10px;border-radius:3px;cursor:pointer}
+.board{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tabs{display:flex;gap:2px;border-bottom:1.5px solid var(--ink);overflow-x:auto}
+.tab{font-family:var(--f-disp);text-transform:uppercase;letter-spacing:.06em;font-size:1rem;font-weight:600;border:0;background:transparent;color:var(--ink-2);padding:8px 14px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sheet .cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline}
+.sheet h2{font-size:1.35rem;text-transform:uppercase;letter-spacing:.04em}
+.sheet .cap span{font-family:var(--f-mono);font-size:.78rem;color:var(--ink-2)}
+.draw{overflow-x:auto}
+.draw svg{display:block;width:100%;min-width:560px;height:auto}
+.facgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.facgrid{grid-template-columns:minmax(0,1fr)}}
+.fac{border:1px solid var(--line);border-radius:3px;padding:8px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fac h3{font-size:1.05rem;text-transform:uppercase;letter-spacing:.05em}
+.fac svg{width:100%;height:auto;display:block}
+.checks{display:flex;flex-direction:column;gap:6px}
+.chk{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:.92rem;padding:6px 10px;border:1px solid var(--line);border-radius:3px;background:var(--sheet)}
+.chk i{width:10px;height:10px;border-radius:50%}
+.chk b{font-family:var(--f-mono);font-weight:500;font-size:.82rem;white-space:nowrap}
+.ok i{background:var(--ok)} .warn i{background:var(--warn)} .bad i{background:var(--bad)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-disp);text-transform:uppercase;letter-spacing:.05em;font-weight:600;color:var(--ink-2)}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tblw{overflow-x:auto}
+.light{display:flex;gap:10px;align-items:center;font-size:.92rem;color:var(--ink-2)}
+.light i{width:28px;height:14px;border-radius:2px;flex:none}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.note{font-size:.85rem;color:var(--ink-2)}
+/* svg */
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .lbl{font-family:var(--f-disp);font-weight:600;letter-spacing:.04em}
+.ln{stroke:var(--ink);fill:none;vector-effect:non-scaling-stroke}
+.thin{stroke:var(--ink-2);fill:none;vector-effect:non-scaling-stroke;stroke-width:.8}
+.dash{stroke-dasharray:5 4}
+.dim{stroke:var(--ink-2);vector-effect:non-scaling-stroke;stroke-width:.8;fill:none}
+.gridl{stroke:var(--grid);vector-effect:non-scaling-stroke;stroke-width:1}
+@media (prefers-reduced-motion:no-preference){svg *{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Romeo y Julieta · Planos de escena</h1>
+      <p>4P · Grupo 2. Dos fachadas sobre ruedas que giran: la calle, el salón de fiestas y el panteón con dos estructuras. Todas las medidas en metros; cambiá un valor y se redibujan las cuatro vistas.</p>
+    </div>
+    <div class="scenes" id="scenes" role="group" aria-label="Escena"></div>
+  </header>
+
+  <div class="main">
+    <aside id="panel" aria-label="Parámetros"></aside>
+
+    <div class="board">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="t-planta" aria-selected="true">Planta</button>
+        <button class="tab" role="tab" id="t-frente" aria-selected="false">Vista desde platea</button>
+        <button class="tab" role="tab" id="t-fach" aria-selected="false">Fachadas</button>
+        <button class="tab" role="tab" id="t-med" aria-selected="false">Medidas y controles</button>
+      </div>
+
+      <section class="sheet" id="v-planta">
+        <div class="cap"><h2 id="cap-planta">Planta</h2><span id="esc-planta"></span></div>
+        <div class="light" id="luz"></div>
+        <div class="draw"><svg id="svg-planta" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      </section>
+      <section class="sheet" id="v-frente" hidden>
+        <div class="cap"><h2>Vista desde platea</h2><span>proyección ortogonal · figura humana 1,70 m</span></div>
+        <div class="draw"><svg id="svg-frente" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      </section>
+      <section class="sheet" id="v-fach" hidden>
+        <div class="cap"><h2>Fachadas en verdadera magnitud</h2><span>lado A = calle · lado B = reverso</span></div>
+        <div class="facgrid" id="facgrid"></div>
+      </section>
+      <section class="sheet" id="v-med" hidden>
+        <div class="cap"><h2>Medidas y controles</h2><span>se recalcula con cada cambio</span></div>
+        <div class="two">
+          <div><h3 style="font-size:1.1rem;text-transform:uppercase;margin-bottom:8px">Controles de giro y espacio</h3><div class="checks" id="checks"></div></div>
+          <div class="tblw"><h3 style="font-size:1.1rem;text-transform:uppercase;margin-bottom:8px">Medidas derivadas y materiales</h3><table id="tabla"></table></div>
+        </div>
+        <p class="note">Placas calculadas en fenólico/OSB de 1,22 × 2,44 m por lado de fachada, sin descontar aberturas. Ruedas: 4 por carro hasta 2,4 m de largo, 6 si es más largo; usar ruedas giratorias con freno.</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const PARAMS=[
+ {g:"Escenario del teatro",open:true,items:[
+  ["W","Ancho de boca",6,16,0.1,10],["D","Profundidad",4,14,0.1,8],["H","Altura de boca",3,10,0.1,6],
+  ["apron","Proscenio (adelante del telón)",0,4,0.1,1.5],["pata","Espacio entre patas (cada lado)",0,3,0.1,1]]},
+ {g:"Carros de fachada",open:true,items:[
+  ["a","Largo de fachada",1.5,5,0.05,3],["p","Espesor del carro",0.6,2.5,0.05,1.2],["h","Altura de fachada",2.5,7,0.05,4.8],
+  ["plat","Altura de plataforma con ruedas",0.1,0.4,0.01,0.15],
+  ["m","Retiro desde el borde de boca",0,3,0.05,0.6],["y0","Distancia al telón",0,4,0.05,1],["th","Apertura hacia el público (°)",0,45,1,20]]},
+ {g:"Balcón (Julieta y Montesco)",items:[
+  ["hb","Altura del piso del balcón",1.5,3.5,0.05,2.4],["ab","Ancho del balcón",0.8,3,0.05,2],["vb","Vuelo del balcón",0.3,1.2,0.05,0.6],["bar","Altura de baranda",0.8,1.2,0.05,0.95]]},
+ {g:"Aberturas",items:[
+  ["dw","Ancho de puerta",0.7,1.2,0.05,0.9],["dh","Alto de puerta",1.8,2.4,0.05,2.1],
+  ["ww","Ancho de ventana",0.5,1.6,0.05,1],["wh","Alto de ventana",0.6,1.6,0.05,1.2],["ws","Antepecho de ventana",0.5,1.4,0.05,1]]},
+ {g:"Pasaje y fondo",items:[
+  ["mw","Ancho del muro mural",2,8,0.1,4.5],["mh","Alto del muro mural",1.5,5,0.1,3.4],["md","Distancia del mural al fondo",0,3,0.05,0.8],
+  ["px","Poste de luz · posición X",-6,6,0.05,-1.7],["py","Poste de luz · profundidad",0,10,0.05,4.6],["ph","Poste de luz · altura",3,7,0.1,5.2],
+  ["tz","Tendedero · altura",2.5,6,0.05,4.2]]},
+ {g:"Reverso (panteón y salón)",items:[
+  ["nc","Nichos · columnas",1,6,1,3],["nr","Nichos · filas",1,6,1,4]]}
+];
+const SCENES=[
+ {id:"dia",name:"Calle · día",rotL:0,rotR:0,color:"#e9c33e",luz:"Luz amarilla de siesta, saturada y calurosa: escenas de calle y de humor (pelea inicial)."},
+ {id:"baile",name:"Baile",rotL:0,rotR:1,color:"#e2508f",luz:"Capuleto gira y muestra el salón: guirnaldas cálidas, bola de espejos, fondo naranja y magenta."},
+ {id:"balcon",name:"Balcón · noche",rotL:0,rotR:0,color:"#4b4fb8",luz:"Azules y violetas profundos con un único cenital tipo farola sobre el balcón; el barrio desaparece."},
+ {id:"tumba",name:"Panteón",rotL:1,rotR:0,color:"#5f86b8",luz:"Montesco gira y muestra el panteón: luz fría y azulada, nichos, flores de plástico y velitas LED."}
+];
+const DEF={};PARAMS.forEach(g=>g.items.forEach(i=>DEF[i[0]]=i[5]));
+let P=Object.assign({},DEF), scene="dia", view="planta";
+try{const s=JSON.parse(localStorage.getItem("rj-planos")||"null");if(s){Object.assign(P,s.P||{});scene=s.scene||scene;}}catch(e){}
+function save(){try{localStorage.setItem("rj-planos",JSON.stringify({P,scene}))}catch(e){}}
+
+/* ---------- panel ---------- */
+const panel=document.getElementById("panel");
+PARAMS.forEach(g=>{
+  const d=document.createElement("details");if(g.open)d.open=true;
+  d.innerHTML=`<summary>${g.g}</summary>`;
+  g.items.forEach(([k,l,mn,mx,st])=>{
+    const w=document.createElement("div");w.className="p";
+    w.innerHTML=`<label for="n-${k}">${l}</label><input type="number" id="n-${k}" min="${mn}" max="${mx}" step="${st}"><input type="range" id="r-${k}" min="${mn}" max="${mx}" step="${st}" aria-label="${l}">`;
+    d.appendChild(w);
+    const n=w.querySelector("input[type=number]"),r=w.querySelector("input[type=range]");
+    n.value=r.value=P[k];
+    const set=v=>{v=parseFloat(v);if(isNaN(v))return;P[k]=v;n.value=r.value=v;render();save();};
+    r.addEventListener("input",e=>set(e.target.value));n.addEventListener("change",e=>set(e.target.value));
+  });
+  panel.appendChild(d);
+});
+const bt=document.createElement("div");bt.className="btns";
+bt.innerHTML=`<button class="b" id="reset">Volver a medidas base</button><button class="b" id="copy">Copiar medidas</button>`;
+panel.appendChild(bt);
+document.getElementById("reset").onclick=()=>{P=Object.assign({},DEF);syncInputs();render();save();};
+document.getElementById("copy").onclick=e=>{
+  const txt=Object.keys(P).map(k=>k+"="+P[k]).join("\n");
+  const b=e.target;navigator.clipboard.writeText(txt).then(()=>{b.textContent="Copiado";setTimeout(()=>b.textContent="Copiar medidas",1500)}).catch(()=>{b.textContent="No se pudo copiar"});
+};
+function syncInputs(){for(const k in P){const n=document.getElementById("n-"+k),r=document.getElementById("r-"+k);if(n){n.value=P[k];r.value=P[k];}}}
+
+/* ---------- escenas ---------- */
+const sc=document.getElementById("scenes");
+SCENES.forEach(s=>{const b=document.createElement("button");b.className="scene";b.dataset.id=s.id;b.innerHTML=`<i style="background:${s.color}"></i>${s.name}`;b.onclick=()=>{scene=s.id;render();save();};sc.appendChild(b);});
+
+/* ---------- tabs ---------- */
+["planta","frente","fach","med"].forEach(v=>{document.getElementById("t-"+v).onclick=()=>{view=v;
+ ["planta","frente","fach","med"].forEach(x=>{document.getElementById("t-"+x).setAttribute("aria-selected",x===v);document.getElementById("v-"+x).hidden=x!==v;});}});
+
+/* ---------- geometría ---------- */
+const R=Math.PI/180, f2=v=>(Math.round(v*100)/100).toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
+function geom(){
+  const S=SCENES.find(s=>s.id===scene);
+  const th=P.th*R;
+  const cL={x:-P.W/2+P.m+P.p/2,y:P.y0+P.a/2}, cR={x:P.W/2-P.m-P.p/2,y:P.y0+P.a/2};
+  const phiL=-th+(S.rotL?Math.PI:0), phiR=Math.PI+th+(S.rotR?Math.PI:0);
+  const r=Math.hypot(P.a/2,P.p/2+P.vb);
+  return {S,cL,cR,phiL,phiR,r};
+}
+function pt(c,phi,u,v){const n=[Math.cos(phi),Math.sin(phi)],t=[-n[1],n[0]];return {x:c.x+u*n[0]+v*t[0],y:c.y+u*n[1]+v*t[1]};}
+function rectPts(c,phi,u1,u2,v1,v2){return [pt(c,phi,u1,v1),pt(c,phi,u2,v1),pt(c,phi,u2,v2),pt(c,phi,u1,v2)];}
+
+/* ---------- svg helpers ---------- */
+const el=(t,a,inner="")=>`<${t} ${Object.entries(a).map(([k,v])=>`${k}="${v}"`).join(" ")}>${inner}</${t}>`;
+function poly(pts,cls,extra={}){return el("polygon",Object.assign({points:pts.map(p=>p.X.toFixed(3)+","+p.Y.toFixed(3)).join(" "),class:cls},extra));}
+function txt(x,y,s,size,extra={}){return el("text",Object.assign({x:x.toFixed(3),y:y.toFixed(3),"font-size":size,"text-anchor":"middle","dominant-baseline":"middle"},extra),s);}
+function dimH(x1,x2,y,lab,fs,tick){ // horizontal dimension at svg y
+  return `<line class="dim" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/>`+
+  `<line class="dim" x1="${x1}" y1="${y-tick}" x2="${x1}" y2="${y+tick}"/><line class="dim" x1="${x2}" y1="${y-tick}" x2="${x2}" y2="${y+tick}"/>`+
+  txt((x1+x2)/2,y-fs*0.75,lab,fs,{fill:"var(--ink-2)"});
+}
+function dimV(x,y1,y2,lab,fs,tick){
+  const ym=(y1+y2)/2;
+  return `<line class="dim" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>`+
+  `<line class="dim" x1="${x-tick}" y1="${y1}" x2="${x+tick}" y2="${y1}"/><line class="dim" x1="${x-tick}" y1="${y2}" x2="${x+tick}" y2="${y2}"/>`+
+  txt(x-fs*0.8,ym,lab,fs,{fill:"var(--ink-2)",transform:`rotate(-90 ${(x-fs*0.8).toFixed(3)} ${ym.toFixed(3)})`});
+}
+
+/* ---------- PLANTA ---------- */
+function planta(G){
+  const svg=document.getElementById("svg-planta");
+  const xmin=-P.W/2-P.pata-1.2, xmax=P.W/2+P.pata+1.2, ymin=-P.D-0.9, ymax=P.apron+1.6;
+  svg.setAttribute("viewBox",`${xmin} ${ymin} ${xmax-xmin} ${ymax-ymin}`);
+  const fs=Math.max(0.17,(xmax-xmin)/70), tk=fs*0.4;
+  const S=(p)=>({X:p.x,Y:-p.y});
+  let o="";
+  // grilla cada 1 m
+  for(let x=Math.ceil(xmin);x<=xmax;x++)o+=`<line class="gridl" x1="${x}" y1="${ymin}" x2="${x}" y2="${ymax}"/>`;
+  for(let y=Math.ceil(ymin);y<=ymax;y++)o+=`<line class="gridl" x1="${xmin}" y1="${y}" x2="${xmax}" y2="${y}"/>`;
+  // luz de escena
+  const sc=G.S;
+  if(sc.id==="balcon"){const b=pt(G.cR,G.phiR,P.p/2+P.vb/2,0);o+=`<circle cx="${b.x}" cy="${-b.y}" r="1.6" fill="${sc.color}" fill-opacity=".22"/>`;}
+  else if(sc.id==="tumba"){const b=pt(G.cL,G.phiL,-(P.p/2+0.8),0);o+=`<ellipse cx="${b.x}" cy="${-b.y}" rx="1.4" ry="${P.a/2+0.4}" fill="${sc.color}" fill-opacity=".2"/>`;}
+  else if(sc.id==="baile"){const b=pt(G.cR,G.phiR,-(P.p/2+1.2),0);o+=`<ellipse cx="${b.x}" cy="${-b.y}" rx="2" ry="${P.a/2+0.6}" fill="${sc.color}" fill-opacity=".18"/>`;}
+  else {o+=`<rect x="${-P.W/2}" y="${-P.D}" width="${P.W}" height="${P.D}" fill="${sc.color}" fill-opacity=".09"/>`;}
+  // escenario
+  o+=`<rect class="ln" x="${-P.W/2-P.pata}" y="${-P.D}" width="${P.W+2*P.pata}" height="${P.D}" stroke-width="1.6"/>`;
+  o+=`<path class="ln" d="M${-P.W/2} 0 L${-P.W/2} ${P.apron} M${P.W/2} 0 L${P.W/2} ${P.apron} M${-P.W/2} ${P.apron} Q0 ${P.apron+0.5} ${P.W/2} ${P.apron}" stroke-width="1.6"/>`;
+  o+=`<line class="ln" x1="${-P.W/2}" y1="0" x2="${P.W/2}" y2="0" stroke-width="2.5" stroke-dasharray="10 4 2 4"/>`;
+  o+=txt(0,0.28,"LÍNEA DE TELÓN",fs*0.85,{class:"lbl",fill:"var(--ink-2)"});
+  o+=txt(0,P.apron+0.95,"▼ PLATEA",fs*1.05,{class:"lbl"});
+  // patas
+  [[-1],[1]].forEach(([s])=>{for(let i=1;i<=3;i++){const y=-P.D*i/4;o+=`<line class="ln" x1="${s*P.W/2}" y1="${y}" x2="${s*(P.W/2+P.pata)}" y2="${y}" stroke-width="3"/>`;}});
+  o+=txt(-P.W/2-P.pata/2,-P.D-0.35,"PATA",fs*0.75,{fill:"var(--ink-2)"})+txt(P.W/2+P.pata/2,-P.D-0.35,"PATA",fs*0.75,{fill:"var(--ink-2)"});
+  // mural
+  const myF=P.D-P.md-0.25;
+  o+=`<rect x="${-P.mw/2}" y="${-(P.D-P.md)}" width="${P.mw}" height="0.25" fill="var(--amber)" fill-opacity=".35" class="ln"/>`;
+  o+=txt(0,-(P.D-P.md)-0.35,"MURO MURAL «EL BARRIO ES NUESTRO»",fs*0.85,{class:"lbl"});
+  // tendedero
+  const fL=pt(G.cL,G.phiL,P.p/2,-P.a/4),fR=pt(G.cR,G.phiR,P.p/2,P.a/4);
+  o+=`<line class="thin dash" x1="${fL.x}" y1="${-fL.y}" x2="${fR.x}" y2="${-fR.y}"/>`;
+  // carros
+  [["L",G.cL,G.phiL,"var(--monte)","MONTESCO",G.S.rotL,"Panteón"],["R",G.cR,G.phiR,"var(--capu)","CAPULETO",G.S.rotR,"Salón de fiestas"]].forEach(([s,c,phi,col,name,rot,rev])=>{
+    o+=`<circle class="thin dash" cx="${c.x}" cy="${-c.y}" r="${G.r}"/>`;
+    o+=poly(rectPts(c,phi,-P.p/2,P.p/2,-P.a/2,P.a/2).map(S),"ln",{fill:col,"fill-opacity":".14","stroke-width":"1.4"});
+    // cara A
+    const a1=pt(c,phi,P.p/2,-P.a/2),a2=pt(c,phi,P.p/2,P.a/2);
+    o+=`<line x1="${a1.x}" y1="${-a1.y}" x2="${a2.x}" y2="${-a2.y}" stroke="${col}" stroke-width="5" vector-effect="non-scaling-stroke"/>`;
+    // balcón
+    o+=poly(rectPts(c,phi,P.p/2,P.p/2+P.vb,-P.ab/2,P.ab/2).map(S),"ln",{fill:col,"fill-opacity":".3","stroke-dasharray":"4 3"});
+    // cara B
+    const b1=pt(c,phi,-P.p/2,-P.a/2),b2=pt(c,phi,-P.p/2,P.a/2);
+    o+=`<line x1="${b1.x}" y1="${-b1.y}" x2="${b2.x}" y2="${-b2.y}" stroke="var(--ink-2)" stroke-width="3" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`;
+    // ruedas
+    [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([u,v])=>{const w=pt(c,phi,u*(P.p/2-0.12),v*(P.a/2-0.15));o+=`<circle cx="${w.x}" cy="${-w.y}" r="0.07" fill="var(--ink)"/>`;});
+    // etiquetas
+    o+=txt(c.x,-c.y-fs*0.7,name,fs*1.05,{class:"lbl",fill:col});
+    o+=txt(c.x,-c.y+fs*0.6,rot?("B · "+rev):"A · calle",fs*0.75,{fill:"var(--ink-2)"});
+    // centro
+    o+=`<path class="thin" d="M${c.x-0.12} ${-c.y} h0.24 M${c.x} ${-c.y-0.12} v0.24"/>`;
+  });
+  o+=txt(G.cL.x,-(G.cL.y+G.r)-fs*0.6,"radio de giro "+f2(G.r)+" m",fs*0.72,{fill:"var(--ink-2)"});
+  // poste
+  o+=`<circle cx="${P.px}" cy="${-P.py}" r="0.1" fill="var(--ink)"/><circle class="thin" cx="${P.px}" cy="${-P.py}" r="0.22"/>`;
+  o+=txt(P.px,-P.py+0.42,"poste",fs*0.75,{fill:"var(--ink-2)"});
+  // utilería calle
+  if(!G.S.rotL){const bk=pt(G.cL,G.phiL,P.p/2+0.35,P.a/2-0.6),tc=pt(G.cL,G.phiL,P.p/2+0.3,-P.a/2+0.5);
+    o+=`<rect x="${bk.x-0.1}" y="${-bk.y-0.8}" width="0.2" height="1.6" rx="0.08" class="thin" fill="none"/>`+txt(bk.x+0.45,-bk.y,"bici",fs*0.7,{fill:"var(--ink-2)"});
+    o+=`<circle class="thin" cx="${tc.x}" cy="${-tc.y}" r="0.25"/>`+txt(tc.x+0.55,-tc.y,"tacho",fs*0.7,{fill:"var(--ink-2)"});}
+  // pasaje
+  const pa=pasaje(G);
+  const yy=-(P.y0+P.a/2);
+  o+=dimH(pa.x1,pa.x2,yy+fs*2.6,"pasaje "+f2(pa.w)+" m",fs*0.85,tk);
+  // cotas generales
+  o+=dimH(-P.W/2,P.W/2,ymin+0.45,"boca "+f2(P.W)+" m",fs*0.85,tk);
+  o+=dimV(xmax-0.5,-P.D,0,"profundidad "+f2(P.D)+" m",fs*0.85,tk);
+  o+=dimV(xmax-0.5,0,P.apron,f2(P.apron),fs*0.7,tk);
+  o+=dimV(-P.W/2+0.25,0,-P.y0,f2(P.y0),fs*0.7,tk);
+  // escala
+  o+=`<path class="ln" d="M${xmin+0.4} ${ymax-0.35} h2 M${xmin+0.4} ${ymax-0.45} v0.2 M${xmin+1.4} ${ymax-0.45} v0.2 M${xmin+2.4} ${ymax-0.45} v0.2"/>`+txt(xmin+1.4,ymax-0.7,"0   1   2 m",fs*0.75,{fill:"var(--ink-2)"});
+  svg.innerHTML=o;
+  document.getElementById("cap-planta").textContent="Planta · "+G.S.name;
+  document.getElementById("esc-planta").textContent="grilla 1 m · telón en y = 0";
+  document.getElementById("luz").innerHTML=`<i style="background:${G.S.color}"></i>${G.S.luz}`;
+}
+function pasaje(G){
+  // distancia libre en piso entre las caras hacia el centro, medida a la mitad de cada carro
+  const lA=pt(G.cL,G.phiL,P.p/2,0),lB=pt(G.cL,G.phiL,-P.p/2,0),rA=pt(G.cR,G.phiR,P.p/2,0),rB=pt(G.cR,G.phiR,-P.p/2,0);
+  const x1=Math.max(lA.x,lB.x),x2=Math.min(rA.x,rB.x);
+  return {x1,x2,w:x2-x1};
+}
+
+/* ---------- VISTA DESDE PLATEA ---------- */
+function frente(G){
+  const svg=document.getElementById("svg-frente");
+  const top=Math.max(P.H,P.h+P.plat,P.ph)+0.9;
+  const xmin=-P.W/2-P.pata-1.2,xmax=P.W/2+P.pata+1.2,ymin=-top,ymax=0.9;
+  svg.setAttribute("viewBox",`${xmin} ${ymin} ${xmax-xmin} ${ymax-ymin}`);
+  const fs=Math.max(0.17,(xmax-xmin)/70),tk=fs*0.4;
+  let o="";
+  // fondo de luz
+  o+=`<rect x="${-P.W/2}" y="${-P.H}" width="${P.W}" height="${P.H}" fill="${G.S.color}" fill-opacity=".1"/>`;
+  // mural (más atrás, se dibuja primero)
+  o+=`<rect x="${-P.mw/2}" y="${-P.mh-P.plat}" width="${P.mw}" height="${P.mh}" fill="var(--amber)" fill-opacity=".22" class="ln"/>`;
+  o+=txt(0,-P.mh/2-P.plat,"MURAL",fs,{class:"lbl",fill:"var(--ink-2)"});
+  // tendedero
+  const fL=pt(G.cL,G.phiL,P.p/2,-P.a/4),fR=pt(G.cR,G.phiR,P.p/2,P.a/4);
+  o+=`<path class="thin" d="M${fL.x} ${-P.tz} Q${(fL.x+fR.x)/2} ${-P.tz+0.5} ${fR.x} ${-P.tz}"/>`;
+  for(let i=1;i<6;i++){const t=i/6,x=fL.x+(fR.x-fL.x)*t,y=-P.tz+0.5*2*t*(1-t)*1;o+=`<rect x="${x-0.15}" y="${y}" width="0.3" height="0.45" fill="var(--ink-2)" fill-opacity=".35"/>`;}
+  // poste
+  o+=`<line class="ln" x1="${P.px}" y1="0" x2="${P.px}" y2="${-P.ph}" stroke-width="3"/><path class="ln" d="M${P.px} ${-P.ph+0.1} q0.3 -0.1 0.55 0.1"/><circle cx="${P.px+0.55}" cy="${-P.ph+0.25}" r="0.1" fill="var(--amber)"/>`;
+  // carros
+  [[G.cL,G.phiL,"var(--monte)",G.S.rotL],[G.cR,G.phiR,"var(--capu)",G.S.rotR]].forEach(([c,phi,col,rot])=>{
+    const all=rectPts(c,phi,-P.p/2,P.p/2,-P.a/2,P.a/2).map(p=>p.x);
+    const x1=Math.min(...all),x2=Math.max(...all);
+    o+=`<rect x="${x1}" y="${-P.plat}" width="${x2-x1}" height="${P.plat}" fill="var(--ink-2)" fill-opacity=".5"/>`;
+    o+=`<circle cx="${x1+0.15}" cy="-0.06" r="0.06" fill="var(--ink)"/><circle cx="${x2-0.15}" cy="-0.06" r="0.06" fill="var(--ink)"/>`;
+    o+=`<rect class="ln" x="${x1}" y="${-P.h-P.plat}" width="${x2-x1}" height="${P.h}" fill="var(--sheet)"/>`;
+    // cara visible hacia centro (A si no giró)
+    const u=rot?-P.p/2:P.p/2;
+    const fa=[pt(c,phi,u,-P.a/2).x,pt(c,phi,u,P.a/2).x];
+    const f1=Math.min(...fa),f2x=Math.max(...fa);
+    o+=`<rect x="${f1}" y="${-P.h-P.plat}" width="${f2x-f1}" height="${P.h}" fill="${rot?"var(--ink-2)":col}" fill-opacity=".28"/>`;
+    if(!rot){
+      const ba=rectPts(c,phi,P.p/2,P.p/2+P.vb,-P.ab/2,P.ab/2).map(p=>p.x);
+      const b1=Math.min(...ba),b2=Math.max(...ba);
+      o+=`<rect x="${b1}" y="${-P.hb-P.plat-0.12}" width="${b2-b1}" height="0.12" fill="${col}"/>`;
+      o+=`<rect class="ln" x="${b1}" y="${-P.hb-P.plat-P.bar}" width="${b2-b1}" height="${P.bar}" fill="none" stroke-width="1"/>`;
+      for(let x=b1+0.12;x<b2;x+=0.14)o+=`<line class="thin" x1="${x}" y1="${-P.hb-P.plat}" x2="${x}" y2="${-P.hb-P.plat-P.bar}"/>`;
+    }
+  });
+  // figuras humanas
+  const fig=(x,z)=>`<g fill="var(--ink)" fill-opacity=".75"><circle cx="${x}" cy="${-z-1.58}" r="0.11"/><rect x="${x-0.17}" y="${-z-1.45}" width="0.34" height="0.65" rx="0.08"/><rect x="${x-0.15}" y="${-z-0.82}" width="0.12" height="0.82"/><rect x="${x+0.03}" y="${-z-0.82}" width="0.12" height="0.82"/></g>`;
+  o+=fig(-0.4,0);
+  if(G.S.id==="balcon"||G.S.id==="dia"){const b=pt(G.cR,G.phiR,P.p/2+P.vb/2,0);o+=fig(b.x,P.hb+P.plat);}
+  // boca
+  o+=`<path class="ln" d="M${-P.W/2-P.pata} ${-P.H} H${P.W/2+P.pata}" stroke-width="2"/>`;
+  o+=`<rect x="${-P.W/2-P.pata}" y="${-P.H-0.5}" width="${P.W+2*P.pata}" height="0.5" fill="var(--ink)" fill-opacity=".85"/>`+txt(0,-P.H-0.25,"BAMBALINA",fs*0.8,{class:"lbl",fill:"var(--sheet)"});
+  o+=`<rect x="${-P.W/2-P.pata}" y="${-P.H}" width="${P.pata}" height="${P.H}" fill="var(--ink)" fill-opacity=".85"/><rect x="${P.W/2}" y="${-P.H}" width="${P.pata}" height="${P.H}" fill="var(--ink)" fill-opacity=".85"/>`;
+  o+=`<line class="ln" x1="${xmin+0.2}" y1="0" x2="${xmax-0.2}" y2="0" stroke-width="2"/>`;
+  // cotas
+  o+=dimV(xmax-0.5,-P.H,0,"boca "+f2(P.H)+" m",fs*0.85,tk);
+  o+=dimV(xmin+0.5,-P.h-P.plat,0,"fachada "+f2(P.h+P.plat)+" m",fs*0.85,tk);
+  o+=dimV(-P.W/2+P.pata*0+0.9,-P.hb-P.plat,0,"balcón "+f2(P.hb+P.plat),fs*0.75,tk);
+  o+=dimH(-P.W/2,P.W/2,0.5,"boca "+f2(P.W)+" m",fs*0.85,tk);
+  svg.innerHTML=o;
+}
+
+/* ---------- FACHADAS ---------- */
+function fachada(kind,side){
+  const a=P.a,h=P.h,pl=P.plat;
+  const xmin=-0.9,xmax=a+0.5,ymin=-(h+pl)-0.6,ymax=0.7;
+  const fs=0.2,tk=0.07;
+  const col=kind==="M"?"var(--monte)":"var(--capu)";
+  let o=`<svg viewBox="${xmin} ${ymin} ${xmax-xmin} ${ymax-ymin}" xmlns="http://www.w3.org/2000/svg">`;
+  // plataforma y ruedas
+  o+=`<rect x="0" y="${-pl}" width="${a}" height="${pl}" fill="var(--ink-2)" fill-opacity=".45"/>`;
+  const nw=a>2.4?3:2;for(let i=0;i<nw;i++){const x=0.15+i*(a-0.3)/(nw-1);o+=`<circle cx="${x}" cy="-0.05" r="0.06" fill="var(--ink)"/>`;}
+  const Z=z=>-(z+pl);
+  o+=`<rect class="ln" x="0" y="${Z(h)}" width="${a}" height="${h}" fill="${side==="A"?col:"var(--ink-2)"}" fill-opacity="${side==="A"?.16:.1}" stroke-width="1.4"/>`;
+  // grilla de placas 1.22 x 2.44
+  for(let x=1.22;x<a;x+=1.22)o+=`<line class="thin dash" x1="${x}" y1="${Z(0)}" x2="${x}" y2="${Z(h)}" stroke-opacity=".5"/>`;
+  for(let z=2.44;z<h;z+=2.44)o+=`<line class="thin dash" x1="0" y1="${Z(z)}" x2="${a}" y2="${Z(z)}" stroke-opacity=".5"/>`;
+  const cx=a/2;
+  if(side==="A"){
+    // puerta y ventana
+    const dx=kind==="M"?0.3:a-0.3-P.dw, wx=kind==="M"?a-0.3-P.ww:0.3;
+    o+=`<rect class="ln" x="${dx}" y="${Z(P.dh)}" width="${P.dw}" height="${P.dh}" fill="var(--sheet)"/>`;
+    o+=`<circle cx="${dx+P.dw-0.12}" cy="${Z(1)}" r="0.03" fill="var(--ink)"/>`;
+    if(P.ws+P.wh<P.hb-0.1){o+=`<rect class="ln" x="${wx}" y="${Z(P.ws+P.wh)}" width="${P.ww}" height="${P.wh}" fill="var(--sheet)"/>`;
+      if(kind==="C")for(let x=wx+0.12;x<wx+P.ww;x+=0.14)o+=`<line class="thin" x1="${x}" y1="${Z(P.ws)}" x2="${x}" y2="${Z(P.ws+P.wh)}"/>`;
+      else o+=`<line class="thin" x1="${wx+P.ww/2}" y1="${Z(P.ws)}" x2="${wx+P.ww/2}" y2="${Z(P.ws+P.wh)}"/>`;}
+    // puerta balcón
+    const bd=Math.min(2.1,h-P.hb-0.15);
+    if(bd>1.2)o+=`<rect class="ln" x="${cx-P.dw/2}" y="${Z(P.hb+bd)}" width="${P.dw}" height="${bd}" fill="var(--sheet)"/>`;
+    // balcón
+    o+=`<rect x="${cx-P.ab/2}" y="${Z(P.hb)}" width="${P.ab}" height="0.12" fill="${col}"/>`;
+    o+=`<rect class="ln" x="${cx-P.ab/2}" y="${Z(P.hb+P.bar)}" width="${P.ab}" height="${P.bar}" fill="none"/>`;
+    for(let x=cx-P.ab/2+0.11;x<cx+P.ab/2;x+=0.11)o+=`<line class="thin" x1="${x}" y1="${Z(P.hb)}" x2="${x}" y2="${Z(P.hb+P.bar)}"/>`;
+    if(kind==="M"){ // bandera
+      const fw=0.65,fx=cx-P.ab/2+0.2;
+      for(let i=0;i<5;i++)o+=`<rect x="${fx+i*fw/5}" y="${Z(P.hb+P.bar)}" width="${fw/5}" height="1.15" fill="${i%2?"var(--sheet)":col}" fill-opacity=".9"/>`;
+      o+=txt(fx+fw/2,Z(P.hb+P.bar)+1.35,"bandera",fs*0.8,{fill:"var(--ink-2)"});
+      o+=txt(dx+P.dw+0.75<a?dx+P.dw+0.7:cx,Z(1.3),"MONTESCO",fs*1.1,{class:"lbl",fill:col});
+    }else{ // toldo y macetas
+      const tz=Math.min(h-0.1,P.hb+2.35);
+      o+=`<path class="ln" d="M${cx-P.ab/2-0.15} ${Z(tz-0.35)} L${cx-P.ab/2+0.05} ${Z(tz)} L${cx+P.ab/2-0.05} ${Z(tz)} L${cx+P.ab/2+0.15} ${Z(tz-0.35)} Z" fill="var(--ink-2)" fill-opacity=".3"/>`;
+      o+=txt(cx,Z(tz)-0.15,"toldo de chapa",fs*0.8,{fill:"var(--ink-2)"});
+      [cx-P.ab/2+0.2,cx+P.ab/2-0.2].forEach(x=>o+=`<rect x="${x-0.1}" y="${Z(P.hb+0.32)}" width="0.2" height="0.2" fill="var(--capu)" fill-opacity=".6"/><circle cx="${x}" cy="${Z(P.hb+0.45)}" r="0.13" fill="var(--ok)" fill-opacity=".6"/>`);
+      o+=txt(dx-0.75>0?dx-0.65:cx,Z(1.3),"CAPULETO",fs*1.1,{class:"lbl",fill:col});
+    }
+    // cotas
+    o+=dimV(-0.35,Z(P.hb),Z(0),f2(P.hb),fs*0.85,tk);
+    o+=dimH(cx-P.ab/2,cx+P.ab/2,Z(P.hb+P.bar)-0.25,"balcón "+f2(P.ab),fs*0.8,tk);
+    o+=dimH(dx,dx+P.dw,Z(0)-0.12-(-0.01),"",fs*0.8,tk);
+  }else if(kind==="M"){ // panteón
+    const m=0.25, top=Math.min(h-0.5,P.nr*0.75+0.4), cw=(a-2*m)/P.nc, rh=(top-0.4)/P.nr;
+    o+=`<rect x="${m-0.08}" y="${Z(top+0.12)}" width="${a-2*m+0.16}" height="${top-0.28}" fill="var(--sheet)" class="ln"/>`;
+    for(let i=0;i<P.nc;i++)for(let j=0;j<P.nr;j++){const x=m+i*cw+0.05,z=0.4+j*rh+0.05;
+      o+=`<rect class="thin" x="${x}" y="${Z(z+rh-0.1)}" width="${cw-0.1}" height="${rh-0.1}" fill="var(--ink-2)" fill-opacity=".12"/>`;
+      o+=`<circle cx="${x+cw-0.22}" cy="${Z(z+0.12)}" r="0.04" fill="var(--amber)"/>`;}
+    o+=`<path class="ln" d="M${cx} ${Z(top+0.95)} v0.6 M${cx-0.18} ${Z(top+0.75)} h0.36"/>`;
+    o+=txt(cx,Z(top+0.25)-0.02,"PANTEÓN · "+P.nc*P.nr+" nichos",fs*0.95,{class:"lbl"});
+    o+=dimH(m,a-m,Z(0)+0.32,"nicho "+f2(cw-0.1)+" × "+f2(rh-0.1),fs*0.8,tk);
+  }else{ // salón
+    for(let k=0;k<3;k++){const z=h-0.6-k*0.55;o+=`<path class="thin" d="M0.1 ${Z(z)} Q${a/4} ${Z(z-0.35)} ${a/2} ${Z(z)} Q${3*a/4} ${Z(z-0.35)} ${a-0.1} ${Z(z)}"/>`;
+      for(let x=0.3;x<a-0.1;x+=0.32)o+=`<circle cx="${x}" cy="${Z(z-0.18*Math.sin(Math.PI*((x/(a/2))%1)))}" r="0.035" fill="var(--amber)"/>`;}
+    o+=`<circle cx="${cx}" cy="${Z(h-0.35)}" r="0.22" fill="var(--sheet)" class="ln"/><line class="thin" x1="${cx}" y1="${Z(h)}" x2="${cx}" y2="${Z(h-0.13)}"/>`;
+    o+=`<rect class="ln" x="${cx-0.6}" y="${Z(0.75)}" width="1.2" height="0.06" fill="var(--ink-2)"/><path class="thin" d="M${cx-0.6} ${Z(0.72)} l-0.05 0.72 M${cx+0.6} ${Z(0.72)} l0.05 0.72"/>`;
+    o+=`<path d="M${cx-0.6} ${Z(0.75)} h1.2 v0.35 h-1.2Z" fill="var(--capu)" fill-opacity=".3"/>`;
+    o+=txt(cx,Z(1.3),"SALÓN · mesa dulce",fs*0.95,{class:"lbl"});
+    o+=txt(cx,Z(h-0.35)-0.38,"bola de espejos",fs*0.75,{fill:"var(--ink-2)"});
+  }
+  o+=dimH(0,a,ymax-0.25,f2(a)+" m",fs*0.9,tk);
+  o+=dimV(-0.7,Z(h),Z(0),f2(h)+" m",fs*0.9,tk);
+  return o+"</svg>";
+}
+function fachadas(){
+  const L=[["M","A","Montesco · lado A","calle: puerta, ventana, balcón con bandera"],["M","B","Montesco · lado B","panteón de barrio (escena final)"],
+           ["C","A","Capuleto · lado A","calle: reja, macetas, toldo; balcón de Julieta"],["C","B","Capuleto · lado B","salón de fiestas (baile)"]];
+  document.getElementById("facgrid").innerHTML=L.map(([k,s,t,d])=>`<div class="fac"><h3 style="color:${k==="M"?"var(--monte)":"var(--capu)"}">${t}</h3><span class="note">${d}</span>${fachada(k,s)}</div>`).join("");
+}
+
+/* ---------- MEDIDAS ---------- */
+function medidas(G){
+  const pa=pasaje(G), r=G.r, out=[];
+  const c=(st,t,v)=>out.push({st,t,v});
+  // giro dentro del espacio
+  [["Montesco",G.cL,-1],["Capuleto",G.cR,1]].forEach(([n,cc,s])=>{
+    const lat=P.W/2+P.pata-(Math.abs(cc.x)+r);
+    c(lat>=0.1?"ok":lat>=0?"warn":"bad",`${n}: al girar no pega en las patas`,"sobra "+f2(lat)+" m");
+    const fr=cc.y-r;
+    c(fr>=0?"ok":fr>=-P.apron?"warn":"bad",`${n}: al girar no pasa la línea de telón`,fr>=0?"sobra "+f2(fr)+" m":"invade "+f2(-fr)+" m");
+    const muro=(P.D-P.md-0.25)-(cc.y+r), solapa=Math.abs(cc.x)-r<P.mw/2;
+    c(!solapa||muro>=0.1?"ok":muro>=0?"warn":"bad",`${n}: al girar no toca el mural`,solapa?"sobra "+f2(muro)+" m":"no se cruzan");
+    const dp=Math.hypot(cc.x-P.px,cc.y-P.py)-r-0.15;
+    c(dp>=0.1?"ok":dp>=0?"warn":"bad",`${n}: al girar no toca el poste`,"sobra "+f2(dp)+" m");
+  });
+  const dd=Math.hypot(G.cR.x-G.cL.x,G.cR.y-G.cL.y)-2*r;
+  c(dd>=0?"ok":"warn","Las dos fachadas pueden girar al mismo tiempo",dd>=0?"sobra "+f2(dd)+" m":"girar de a una");
+  c(pa.w>=3?"ok":pa.w>=2.2?"warn":"bad","Pasaje libre para peleas y baile (mín. 3 m)",f2(pa.w)+" m");
+  const hb=P.H-0.5-(P.h+P.plat);
+  c(hb>=0.2?"ok":hb>=0?"warn":"bad","La fachada queda debajo de la bambalina",hb>=0?"sobra "+f2(hb)+" m":"pasa "+f2(-hb)+" m");
+  c(P.ph<=P.H-0.5?"ok":"warn","El poste no queda tapado por la bambalina",f2(P.H-0.5-P.ph)+" m");
+  c(P.hb+2.1+0.15<=P.h?"ok":"warn","Entra la puerta del balcón (2,10 m)",f2(P.h-P.hb-0.15)+" m libres");
+  c(P.bar>=0.9?"ok":"bad","Baranda del balcón segura (mín. 0,90 m)",f2(P.bar)+" m");
+  c(P.hb<=3?"ok":"warn","Altura del balcón para trepar la reja sin riesgo (≤ 3 m)",f2(P.hb)+" m");
+  document.getElementById("checks").innerHTML=out.map(x=>`<div class="chk ${x.st}"><i></i><span>${x.t}</span><b>${x.v}</b></div>`).join("");
+  const placas=Math.ceil(P.a/1.22)*Math.ceil(P.h/2.44), ruedas=P.a>2.4?6:4;
+  const rows=[["Radio de giro de cada carro (con balcón)",f2(r)+" m"],["Pasaje libre en el centro",f2(pa.w)+" m"],
+    ["Superficie por lado de fachada",f2(P.a*P.h)+" m²"],["Pintura total (4 lados + mural)",f2(4*P.a*P.h+P.mw*P.mh)+" m²"],
+    ["Placas 1,22 × 2,44 por lado",placas+" u"],["Placas totales (4 lados)",4*placas+" u"],
+    ["Plataforma de cada carro",f2(P.a)+" × "+f2(P.p)+" m"],["Ruedas con freno",ruedas+" por carro · "+2*ruedas+" total"],
+    ["Balcón (piso)",f2(P.ab)+" × "+f2(P.vb)+" m a "+f2(P.hb+P.plat)+" m del piso"],
+    ["Baranda (por balcón)",f2(P.ab+2*P.vb)+" m lineales"],["Muro mural",f2(P.mw)+" × "+f2(P.mh)+" m"],
+    ["Tendedero (cuerda)",f2(Math.abs(pt(G.cR,G.phiR,P.p/2,P.a/4).x-pt(G.cL,G.phiL,P.p/2,-P.a/4).x)+1)+" m"]];
+  document.getElementById("tabla").innerHTML=`<tr><th>Elemento</th><th style="text-align:right">Medida</th></tr>`+rows.map(([a,b])=>`<tr><td>${a}</td><td class="n">${b}</td></tr>`).join("");
+  return out;
+}
+
+function render(){
+  document.querySelectorAll(".scene").forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===scene));
+  const G=geom();planta(G);frente(G);fachadas();medidas(G);
+}
+render();
+</script>
+</html>
